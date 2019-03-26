@@ -56,7 +56,7 @@ class DesktopCapturer : public mate::TrackableObject<DesktopCapturer>,
   bool ShouldScheduleNextRefresh(DesktopMediaList* list) override;
 
  private:
-  void UpdateSourcesList(DesktopMediaList* list);
+  void UpdateSourcesList(mate::Arguments* args);
 
   std::unique_ptr<DesktopMediaList> window_capturer_;
   std::unique_ptr<DesktopMediaList> screen_capturer_;

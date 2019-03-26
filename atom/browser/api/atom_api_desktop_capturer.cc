@@ -135,7 +135,10 @@ bool DesktopCapturer::ShouldScheduleNextRefresh(DesktopMediaList* list) {
   return false;
 }
 
-void DesktopCapturer::UpdateSourcesList(DesktopMediaList* list) {
+void DesktopCapturer::UpdateSourcesList(mate::Arguments* args) {
+  DesktopMediaList* list;
+  args->GetNext(&list);
+
   if (capture_window_ &&
       list->GetMediaListType() == content::DesktopMediaID::TYPE_WINDOW) {
     capture_window_ = false;
@@ -169,8 +172,14 @@ void DesktopCapturer::UpdateSourcesList(DesktopMediaList* list) {
       std::vector<std::string> device_names;
       // Crucially, this list of device names will be in the same order as
       // |media_list_sources|.
-      webrtc::DxgiDuplicatorController::Instance()->GetDeviceNames(
-          &device_names);
+      bool success =
+          webrtc::DxgiDuplicatorController::Instance()->GetDeviceNames(
+              &device_names);
+
+      if (!success)
+        args->ThrowError(
+            "Failed to get device names of all screens on the system.");
+
       int device_name_index = 0;
       for (auto& source : screen_sources) {
         const auto& device_name = device_names[device_name_index++];
